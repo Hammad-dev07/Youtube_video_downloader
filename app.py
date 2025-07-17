@@ -17,34 +17,25 @@ if st.button("⬇️ Download"):
         st.error("⚠️ Please enter a valid YouTube URL.")
     else:
         try:
-            # 📄 Output file template
             output_template = os.path.join(
                 DOWNLOAD_DIR, f"{filename}.%(ext)s") if filename else os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
 
-            # 🔧 yt-dlp options with fallback formats
             ydl_opts = {
                 "outtmpl": output_template,
                 "format": (
                     "bestaudio[ext=m4a]/bestaudio/best"
                     if "Audio" in choice
-                    else "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
+                    else "best[ext=mp4]/best"
                 ),
-                "merge_output_format": "mp4" if "Video" in choice else "m4a",
-                "quiet": True,
                 "noplaylist": True,
-                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-                "http_headers": {
-                    "Referer": video_url,
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                }
+                "quiet": True,
+                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
             }
 
-            # 📥 Download
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(video_url, download=True)
                 downloaded_file_path = ydl.prepare_filename(info)
 
-            # 📎 Streamlit download button
             with open(downloaded_file_path, "rb") as file:
                 st.success("✅ Download complete!")
                 st.info("📁 File will be saved to your browser's Downloads folder.")
