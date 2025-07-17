@@ -7,7 +7,7 @@ st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 DOWNLOAD_DIR = "downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-st.title("🎥 YouTube Video and Audio Downloader )")
+st.title("🎥 YouTube Video & Audio Downloader")
 
 video_url = st.text_input("🔗 Paste YouTube URL:")
 download_type = st.radio("Choose download type:", ["🎥 Video (MP4)", "🎵 Audio (M4A)"])
