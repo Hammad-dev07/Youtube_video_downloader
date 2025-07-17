@@ -17,22 +17,6 @@ download_type = st.radio("Choose download type:", ["🎥 Video (MP4)", "🎵 Aud
 if video_url and st.button("⬇️ Download Now"):
     try:
         output_template = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
-        progress = st.progress(0)
-        status_text = st.empty()
-
-        def progress_hook(d):
-            if d["status"] == "downloading":
-                percent = d.get("_percent_str", "0.0%").strip().replace("%", "")
-                try:
-                    progress.progress(min(int(float(percent)), 100))
-                    status_text.text(f"⬇️ Downloading... {percent}%")
-                except:
-                    pass
-            elif d["status"] == "finished":
-                progress.progress(100)
-                status_text.text("✅ Download complete!")
-                progress.empty()
-                status_text.empty()
 
         # Format selection without merge
         if "Audio" in download_type:
@@ -47,7 +31,6 @@ if video_url and st.button("⬇️ Download Now"):
             "quiet": True,
             "noplaylist": True,
             "merge_output_format": merge_format,
-            "progress_hooks": [progress_hook],
             "format": format_code,
         }
 
@@ -56,7 +39,7 @@ if video_url and st.button("⬇️ Download Now"):
             downloaded_path = ydl.prepare_filename(info)
 
         with open(downloaded_path, "rb") as f:
-            st.success("✅ Download ready!")
+            st.success("✅ Download complete!")
             st.download_button(
                 label="📥 Click to save",
                 data=f,
