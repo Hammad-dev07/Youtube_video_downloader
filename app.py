@@ -7,10 +7,10 @@ st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 DOWNLOAD_DIR = "downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-st.title("🎥 YouTube Video/Audio Downloader")
+st.title("🎥 YouTube Video and Audio Downloader")
 
 video_url = st.text_input("🔗 Paste YouTube URL:")
-download_type = st.radio("Choose download type:", ["🎥 Video (MP4)", "🎵 Audio (M4A)"])
+download_type = st.radio("Choose download type:", ["🎥 Video", "🎵 Audio"])
 
 if video_url and st.button("⬇️ Download Now"):
     try:
