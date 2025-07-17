@@ -10,17 +10,16 @@ st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 DOWNLOAD_DIR = "downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-st.title("🎥 YouTube Video & Audio Downloader")
+st.title("🎥 YouTube Video/Audio Downloader")
 
 # User input
 video_url = st.text_input("🔗 Paste YouTube URL:")
 download_type = st.radio("Choose download type:", ["🎥 Video (MP4)", "🎵 Audio (M4A)"])
 
 if video_url and st.button("⬇️ Download Now"):
-    with st.spinner("🔄 Starting download process..."):
-        success = False
-        attempts = 0
-        max_attempts = 5
+    success = False
+    attempts = 0
+    max_attempts = 5
     
     # Multiple configurations to try
     configs = [
@@ -90,15 +89,12 @@ if video_url and st.button("⬇️ Download Now"):
             }
         }
     ]
-
+    
     while not success and attempts < max_attempts:
         try:
             config = configs[attempts]
             
-            # Show current method being tried
-            st.info(f"🔄 Method {attempts + 1}/{max_attempts}: {config['name']}")
-            
-            with st.spinner(f"⏳ Processing with {config['name']}..."):
+            with st.spinner(f"⏳ Method {attempts + 1}/{max_attempts}: {config['name']}..."):
                 output_template = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
                 
                 # Base options
@@ -147,8 +143,7 @@ if video_url and st.button("⬇️ Download Now"):
             attempts += 1
             if attempts < max_attempts:
                 st.warning(f"⚠️ Method {attempts} failed, trying next...")
-                with st.spinner("⏳ Preparing next method..."):
-                    time.sleep(2)  # Longer delay before next attempt
+                time.sleep(2)  # Longer delay before next attempt
             else:
                 st.error(f"❌ All {max_attempts} methods failed!")
                 st.info("🔧 Try: Update yt-dlp, use VPN, or try different video")
