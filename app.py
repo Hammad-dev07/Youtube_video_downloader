@@ -21,15 +21,21 @@ if video_url and st.button("⬇️ Download Now"):
             "quiet": True,
             "noplaylist": True,
             "merge_output_format": None,
+            "default_search": "auto",  # Fixes invalid URLs / error 403 cases
             "format": (
                 "bestaudio[ext=m4a]/bestaudio/best"
                 if "Audio" in download_type
-                else "best[ext=mp4]/bestvideo+bestaudio/best"
+                else "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best"
             ),
             "http_headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                              "AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/114.0.0.0 Safari/537.36"
+                "User-Agent": (
+                    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
+                    "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                    "Version/16.0 Mobile/15E148 Safari/604.1"
+                ),
+                "Accept": "*/*",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Connection": "keep-alive",
             },
         }
 
