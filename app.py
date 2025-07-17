@@ -5,55 +5,57 @@ import os
 # Page configuration
 st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 
-# Set download folder (temp folder inside app)
+# Create downloads folder if it doesn't exist
 DOWNLOAD_DIR = "downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-st.title("🎥 YouTube Downloader (Mobile + Desktop Friendly)")
+st.title("🎥 YouTube Downloader (403 Fixed)")
 
-# User Input
+# Input from user
 video_url = st.text_input("🔗 Paste YouTube URL:")
-download_type = st.radio("Download Type:", ["🎥 Video", "🎵 Audio"])
+download_type = st.radio("Choose format:", ["🎥 Video", "🎵 Audio"])
 
-# Download Button
 if video_url and st.button("⬇️ Download Now"):
     try:
-        output_path = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
+        output_template = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
 
         ydl_opts = {
-            "outtmpl": output_path,
+            "outtmpl": output_template,
             "quiet": True,
             "noplaylist": True,
             "merge_output_format": None,
-            "default_search": "auto",  # fallback to ytsearch if bad link
-            "force_generic_extractor": True,  # helps avoid 403 in some mobile cases
             "format": (
                 "bestaudio[ext=m4a]/bestaudio"
                 if "Audio" in download_type
-                else "best[ext=mp4]/bestvideo+bestaudio/best"
+                else "best[ext=mp4]/best"
             ),
+            "force_generic_extractor": False,
+            "skip_download": False,
+            "nocheckcertificate": True,
+            "allow_unplayable_formats": False,
             "http_headers": {
                 "User-Agent": (
-                    "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
-                    "AppleWebKit/605.1.15 (KHTML, like Gecko) "
-                    "Version/16.0 Mobile/15E148 Safari/604.1"
-                )
+                    "Mozilla/5.0 (Linux; Android 10; SM-G975F) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/114.0.0.0 Mobile Safari/537.36"
+                ),
+                "Accept-Language": "en-US,en;q=0.9",
             },
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=True)
-            file_path = ydl.prepare_filename(info)
+            filepath = ydl.prepare_filename(info)
 
-        if not os.path.exists(file_path):
-            raise FileNotFoundError("Downloaded file not found.")
+        if not os.path.exists(filepath):
+            raise FileNotFoundError("Downloaded file not found!")
 
-        with open(file_path, "rb") as f:
+        with open(filepath, "rb") as f:
             st.success("✅ Download ready!")
             st.download_button(
                 label="📥 Click to Save",
                 data=f,
-                file_name=os.path.basename(file_path),
+                file_name=os.path.basename(filepath),
                 mime="audio/m4a" if "Audio" in download_type else "video/mp4"
             )
 
