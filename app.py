@@ -20,13 +20,17 @@ if st.button("⬇️ Download"):
             output_template = os.path.join(
                 DOWNLOAD_DIR, f"{filename}.%(ext)s") if filename else os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
 
-            # Set up yt-dlp options
+            # Set up yt-dlp options with headers to avoid 403 error
             ydl_opts = {
                 "outtmpl": output_template,
                 "format": "bestaudio[ext=m4a]/bestaudio/best" if "Audio" in choice else "best[ext=mp4]/best",
                 "quiet": True,
                 "noplaylist": True,
-                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "http_headers": {
+                    "Referer": video_url,
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                }
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -45,4 +49,4 @@ if st.button("⬇️ Download"):
                 )
 
         except Exception as e:
-            st.error(f"❌ Download failed: {e}")
+            st.error(f"❌ Download failed: {str(e)}")
