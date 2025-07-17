@@ -5,42 +5,28 @@ import os
 # Page config
 st.set_page_config(page_title="YouTube Downloader", page_icon="🎬")
 
-# Downloads folder (remove if you want everything in memory only)
 DOWNLOAD_DIR = "downloads"
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
-st.title("🎥 YouTube Video/Audio Downloader")
+st.title("🎥 YouTube Video and Audio Downloader")
 
-# Input
 video_url = st.text_input("🔗 Paste YouTube URL:")
-download_type = st.radio("Choose download type:", ["🎥 Video (MP4)", "🎵 Audio (M4A)"])
+download_type = st.radio("Choose download type:", ["🎥 Video", "🎵 Audio"])
 
 if video_url and st.button("⬇️ Download Now"):
     try:
-        # Output file path
         output_template = os.path.join(DOWNLOAD_DIR, "%(title)s.%(ext)s")
 
-        # Format, MIME, merge logic
-        if "Audio" in download_type:
-            format_code = "bestaudio[ext=m4a]/bestaudio"
-            merge_format = "m4a"
-            mime_type = "audio/m4a"
-        else:
-            format_code = "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"
-            merge_format = "mp4"
-            mime_type = "video/mp4"
-
-        # yt_dlp config
         ydl_opts = {
             "outtmpl": output_template,
             "quiet": True,
             "noplaylist": True,
-            "merge_output_format": merge_format,
-            "format": format_code,
-            "force_generic_extractor": False,
-            "http_headers": {
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 15_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Mobile/15E148 Safari/604.1"
-            }
+            "merge_output_format": None, 
+            "format": (
+                "bestaudio[ext=m4a]/bestaudio"
+                if "Audio" in download_type
+                else "best[ext=mp4]/best"
+            ),
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -53,7 +39,7 @@ if video_url and st.button("⬇️ Download Now"):
                 label="📥 Click to save",
                 data=f,
                 file_name=os.path.basename(downloaded_path),
-                mime=mime_type
+                mime="audio/m4a" if "Audio" in download_type else "video/mp4"
             )
 
     except Exception as e:
